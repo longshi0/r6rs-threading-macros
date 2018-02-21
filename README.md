@@ -10,7 +10,7 @@ e.g. for math expressions or object-oriented code.
 ## Arrows
 (**~>** *val expr exprs ...*)
 
-Insert *val* as the second item in *expr* and subsequently as the second item in each *exprs* ...
+Insert *val* subsequently as the second item in each *exprs ...*
 
 ```scheme
 (~> 3
@@ -20,3 +20,28 @@ Insert *val* as the second item in *expr* and subsequently as the second item in
 ; => 1
 ```
 ---
+(**~>>** *val exprs ...*)
+
+Insert *val* subsequently as the last item in each *exprs ...*
+
+```scheme
+(~>> 100
+    (< 1 10)
+    (or #f)
+    ((lambda (x) (if x 'foo 'bar))))
+; => foo
+```
+---
+
+## Wands
+(**~<> *val exprs ...*)
+
+Insert *val* wherever the symbol *<>* appears in each *exprs ...* form.
+
+```scheme
+(~<> 50
+     (< 1 <> 100)
+     (and <> <>)
+     (if <> 'foo 'bar))
+; => foo
+```
