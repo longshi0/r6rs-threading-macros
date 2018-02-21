@@ -9,18 +9,18 @@
   (define-syntax ~<>*
     (lambda (x)
       (syntax-case x ()
-        ((_ val (expr exprs ...))
+        ((_ init (expr exprs ...))
           (let loop ((a #'expr) (d #'(exprs ...)))
             (let ((a^ (if (and (identifier? a) (free-identifier=? a #'<>))
-                        #'val
+                        #'init
                         a)))
               (if (null? d)
                 (list a^)
                 (cons a^ (loop (car d) (cdr d)))))))
-        ((_ val f) #'(f val)))))
+        ((_ init f) #'(f init)))))
 
   (define-syntax ~<>
     (syntax-rules ()
-      ((_ val) val)
-      ((_ val e0 e1 ...) (~<> (~<>* val e0) e1 ...))))
+      ((_ init) init)
+      ((_ init e0 e1 ...) (~<> (~<>* init e0) e1 ...))))
   )
