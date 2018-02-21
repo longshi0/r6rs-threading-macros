@@ -3,19 +3,25 @@
   (export ~> ~>> <> ~<>)
   (import (rnrs))
 
-  (define-syntax ~>
-    (syntax-rules ()
-      ((_ init (f expr ...)) (f init expr ...))
-      ((_ init (f expr ...) exprs ...) (~>> (f init expr ... ) exprs ...))
-      ((_ init x) (if (procedure? x) (x init) x))
-      ((_ init x expr ...) (~> (~> init x) expr ...))))
+(define-syntax ~>
+  (lambda (stx)
+    (syntax-case stx ()
+      ((_ init) #'init)
+      ((_ init form)
+        (syntax-case #'form ()
+          ((f f1 ...) #'(f init f1 ...))
+          (f #'(if (procedure? f) (f init) f))))
+      ((_ init form forms ...) #'(~> (~> init form) forms ...)))))
 
-  (define-syntax ~>>
-    (syntax-rules ()
-      ((_ init (f expr ...)) (f expr ... init))
-      ((_ init (f expr ...) exprs ...) (~>> (f expr ... init) exprs ...))
-      ((_ init x) (if (procedure? x) (x init) x))
-      ((_ init x expr ...) (~>> (~>> init x) expr ...))))
+(define-syntax ~>>
+  (lambda (stx)
+    (syntax-case stx ()
+      ((_ init) #'init)
+      ((_ init form)
+        (syntax-case #'form ()
+          ((f f1 ...) #'(f f1 ... init))
+          (f #'(if (procedure? f) (f init) f))))
+      ((_ init form forms ...) #'(~>> (~>> init form) forms ...)))))
 
   (define-syntax <>
     (lambda (x) (syntax-violation '<> "misplaced aux keyword" x)))
@@ -31,7 +37,7 @@
               (if (null? d)
                 (list a^)
                 (cons a^ (loop (car d) (cdr d)))))))
-        ((_ init f) #'(f init)))))
+        ((_ init f) #'(if (procedure? f) (f init) f)))))
 
   (define-syntax ~<>
     (syntax-rules ()
