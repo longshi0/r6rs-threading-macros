@@ -38,16 +38,3 @@
       ((_ init) init)
       ((_ init e0 e1 ...) (~<> (~<>* init e0) e1 ...))))
   )
-
-;; need to add license
-;; also I suspect that these can be simplified but I've wasted a lot of time on them
-;> (define-syntax pc
-;    (lambda (x)
-;      (syntax-case x ()
-;        ((_ x)
-;         (pair? (syntax->datum #'x))
-;         (syntax-case #'x ()
-;           ((a d ...) #'a)))
-;        ((_ x) #''atom))))
-;> (pc (+ 2 2))
-;#<procedure +>
