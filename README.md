@@ -7,7 +7,7 @@ e.g. for math expressions or object-oriented code).
 
 **N.B.** when threading lambda expressions, they must be enclosed within an extra set of parens.
 
-## Arrows
+## (import (threading arrows))
 (**~>** *init-expr exprs ...*)
 
 Insert *init-expr* subsequently as the second item in each *exprs ...*
@@ -33,7 +33,7 @@ Insert *init-expr* subsequently as the last item in each *exprs ...*
 ```
 ---
 
-## Wands
+## (import (threading wands))
 (**~<>** *init-expr exprs ...*)
 
 Insert *init-expr* wherever the symbol **<>** appears in each *exprs ...* form.
