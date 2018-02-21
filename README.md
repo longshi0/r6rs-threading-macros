@@ -34,7 +34,7 @@ Insert *val* subsequently as the last item in each *exprs ...*
 ---
 
 ## Wands
-(**~<> *val exprs ...*)
+(**~<>** *val exprs ...*)
 
 Insert *val* wherever the symbol *<>* appears in each *exprs ...* form.
 
