@@ -36,7 +36,7 @@ Insert *val* subsequently as the last item in each *exprs ...*
 ## Wands
 (**~<>** *val exprs ...*)
 
-Insert *val* wherever the symbol *<>* appears in each *exprs ...* form.
+Insert *val* wherever the symbol **<>** appears in each *exprs ...* form.
 
 ```scheme
 (~<> 50
