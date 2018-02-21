@@ -8,9 +8,9 @@ e.g. for math expressions or object-oriented code).
 **N.B.** when threading lambda expressions, they must be enclosed within an extra set of parens.
 
 ## Arrows
-(**~>** *val expr exprs ...*)
+(**~>** *init-expr exprs ...*)
 
-Insert *val* subsequently as the second item in each *exprs ...*
+Insert *init-expr* subsequently as the second item in each *exprs ...*
 
 ```scheme
 (~> 3
@@ -20,9 +20,9 @@ Insert *val* subsequently as the second item in each *exprs ...*
 ; => 1
 ```
 ---
-(**~>>** *val exprs ...*)
+(**~>>** *init-expr exprs ...*)
 
-Insert *val* subsequently as the last item in each *exprs ...*
+Insert *init-expr* subsequently as the last item in each *exprs ...*
 
 ```scheme
 (~>> 100
@@ -34,12 +34,12 @@ Insert *val* subsequently as the last item in each *exprs ...*
 ---
 
 ## Wands
-(**~<>** *val exprs ...*)
+(**~<>** *init-expr exprs ...*)
 
-Insert *val* wherever the symbol **<>** appears in each *exprs ...* form.
+Insert *init-expr* wherever the symbol **<>** appears in each *exprs ...* form.
 
 ```scheme
-(~<> 50
+(~<> (add1 1)
      (< 1 <> 100)
      (and <> <>)
      (if <> 'foo 'bar))
