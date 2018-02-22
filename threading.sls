@@ -22,7 +22,7 @@
 
 #!r6rs
 (library (threading)
-  (export ~> ~>> some~> some~>> <> ~<>)
+  (export ~> ~>> some~> some~>> <> ~<> ~<>> some~<> some~<>>)
   (import (rnrs))
 
   (define-syntax ~?
@@ -39,46 +39,54 @@
         ((_ _ init form)
           #'(if (procedure? form) (form init) form)))))
 
-  (define-syntax define-arrow
+  (define-syntax wand~?
+    (lambda (stx)
+      (syntax-case stx ()
+        ((_ _ init (forms ...))
+          (memq '<> (syntax->datum #'(forms ...)))
+          #`#,(map
+                (lambda (x) (if (and (identifier? x) (free-identifier=? x #'<>))
+                              #'init
+                              x))
+                #'(forms ...)))
+        ((_ pred init form) #'(~? pred init form)))))
+
+  (define-syntax define-threading-macro
     (lambda (x)
       (syntax-case x ()
-        ((_ arr where some?)
-          (boolean? (syntax->datum #'some?))
-          #'(define-syntax arr
+        ((_ name where arrow? some?)
+          (and
+            (boolean? (syntax->datum #'arrow?))
+            (boolean? (syntax->datum #'some?)))
+          #'(define-syntax name
              (lambda (x)
                (syntax-case x ()
                   ((_ init) #'init)
-                  ((_ init form) #'(~? where init form))
+                  ((_ init form)
+                    (if (syntax->datum #'arrow?)
+                      #'(~? where init form)
+                      #'(wand~? where init form)))
                   ((_ init form forms (... ...))
                     (if (syntax->datum #'some?)
-                      #'(let ((i (arr init form))) (if i (arr i forms (... ...)) #f))
-                      #'(let ((i (arr init form))) (arr i forms (... ...))))))))))))
+                      #'(let ((i (name init form))) (if i (name i forms (... ...)) #f))
+                      #'(let ((i (name init form))) (name i forms (... ...))))))))))))
 
-  (define-arrow ~> before #f)
+  (define-threading-macro ~> before #t #f)
 
-  (define-arrow ~>> after #f)
+  (define-threading-macro ~>> after #t #f)
 
-  (define-arrow some~> before #t)
+  (define-threading-macro some~> before #t #t)
 
-  (define-arrow some~>> after #t)
+  (define-threading-macro some~>> after #t #t)
 
   (define-syntax <>
     (lambda (x) (syntax-violation '<> "misplaced aux keyword" x)))
 
-  (define-syntax ~<>*
-  (lambda (stx)
-    (syntax-case stx ()
-      ((_ _ init (forms ...))
-        (memq '<> (syntax->datum #'(forms ...)))
-        #`#,(map
-              (lambda (x) (if (and (identifier? x) (free-identifier=? x #'<>))
-                            #'init
-                            x))
-              #'(forms ...)))
-      ((_ pred init form) #'(~? pred init form)))))
+  (define-threading-macro ~<> before #f #f)
 
-  (define-syntax ~<>
-    (syntax-rules ()
-      ((_ init) init)
-      ((_ init e0 e1 ...) (~<> (~<>* init e0) e1 ...))))
+  (define-threading-macro ~<>> after #f #f)
+
+  (define-threading-macro some~<> before #f #t)
+
+  (define-threading-macro some~<>> after #f #t)
   )
