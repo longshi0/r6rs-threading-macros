@@ -1,27 +1,45 @@
 #!r6rs
 (library (threading)
-  (export ~> ~>> <> ~<>)
+  (export ~> ~>> some~> some~>> <> ~<>)
   (import (rnrs))
 
-(define-syntax ~>
-  (lambda (stx)
-    (syntax-case stx ()
-      ((_ init) #'init)
-      ((_ init form)
-        (syntax-case #'form ()
-          ((f f1 ...) #'(f init f1 ...))
-          (f #'(if (procedure? f) (f init) f))))
-      ((_ init form forms ...) #'(~> (~> init form) forms ...)))))
+  (define-syntax ~?
+    (lambda (x)
+      (syntax-case x ()
+        ((_ pred init form)
+          (pair? (syntax->datum #'form))
+          (syntax-case #'form (before after)
+            ((f f1 ...)
+              (and (identifier? #'pred) (free-identifier=? #'pred #'before))
+              #'(f init f1 ...))
+            ((f f1 ...)
+              (and (identifier? #'pred) (free-identifier=? #'pred #'after))
+              #'(f f1 ... init))))
+        ((_ _ init form)
+          #'(if (procedure? form) (form init) form)))))
 
-(define-syntax ~>>
-  (lambda (stx)
-    (syntax-case stx ()
-      ((_ init) #'init)
-      ((_ init form)
-        (syntax-case #'form ()
-          ((f f1 ...) #'(f f1 ... init))
-          (f #'(if (procedure? f) (f init) f))))
-      ((_ init form forms ...) #'(~>> (~>> init form) forms ...)))))
+  (define-syntax define-arrow
+    (lambda (x)
+      (syntax-case x ()
+        ((_ arr where some?)
+          (boolean? (syntax->datum #'some?))
+          #'(define-syntax arr
+             (lambda (x)
+               (syntax-case x ()
+                  ((_ init) #'init)
+                  ((_ init form) #'(~? where init form))
+                  ((_ init form forms (... ...))
+                    (if (syntax->datum #'some?)
+                      #'(let ((i (arr init form))) (if i (arr i forms (... ...)) #f))
+                      #'(let ((i (arr init form))) (arr i forms (... ...))))))))))))
+
+  (define-arrow ~> before #f)
+
+  (define-arrow ~>> after #f)
+
+  (define-arrow some~> before #t)
+
+  (define-arrow some~>> after #t)
 
   (define-syntax <>
     (lambda (x) (syntax-violation '<> "misplaced aux keyword" x)))
