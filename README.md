@@ -32,7 +32,7 @@ Insert *init-expr* subsequently as the last item in each *exprs ...*
 ; => foo
 ```
 ---
-(**~<>** *init-expr exprs ...*)
+<!--(**~<>** *init-expr exprs ...*)
 
 Insert *init-expr* wherever the symbol **<>** appears in each *exprs ...* form.
 
@@ -44,3 +44,4 @@ Insert *init-expr* wherever the symbol **<>** appears in each *exprs ...* form.
 ; => foo
 ```
 ---
+-->
