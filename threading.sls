@@ -26,8 +26,8 @@
   (import (rnrs))
 
   (define-syntax ~?
-    (lambda (x)
-      (syntax-case x ()
+    (lambda (stx)
+      (syntax-case stx ()
         ((_ pred init form)
           (pair? (syntax->datum #'form))
           (syntax-case #'form (before after)
@@ -52,8 +52,8 @@
         ((_ pred init form) #'(~? pred init form)))))
 
   (define-syntax define-threading-macro
-    (lambda (x)
-      (syntax-case x ()
+    (lambda (stx)
+      (syntax-case stx ()
         ((_ name where arrow? some?)
           (and
             (boolean? (syntax->datum #'arrow?))
