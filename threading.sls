@@ -10,11 +10,10 @@
           (pair? (syntax->datum #'form))
           (syntax-case #'form (before after)
             ((f f1 ...)
-              (and (identifier? #'pred) (free-identifier=? #'pred #'before))
-              #'(f init f1 ...))
-            ((f f1 ...)
-              (and (identifier? #'pred) (free-identifier=? #'pred #'after))
-              #'(f f1 ... init))))
+              (identifier? #'pred)
+              (cond
+                ((free-identifier=? #'pred #'before) #'(f init f1 ...))
+                ((free-identifier=? #'pred #'after) #'(f f1 ... init))))))
         ((_ _ init form)
           #'(if (procedure? form) (form init) form)))))
 
