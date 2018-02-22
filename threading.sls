@@ -66,17 +66,16 @@
     (lambda (x) (syntax-violation '<> "misplaced aux keyword" x)))
 
   (define-syntax ~<>*
-    (lambda (x)
-      (syntax-case x ()
-        ((_ init (expr exprs ...))
-          (let loop ((a #'expr) (d #'(exprs ...)))
-            (let ((a^ (if (and (identifier? a) (free-identifier=? a #'<>))
-                        #'init
-                        a)))
-              (if (null? d)
-                (list a^)
-                (cons a^ (loop (car d) (cdr d)))))))
-        ((_ init f) #'(if (procedure? f) (f init) f)))))
+  (lambda (stx)
+    (syntax-case stx ()
+      ((_ _ init (forms ...))
+        (memq '<> (syntax->datum #'(forms ...)))
+        #`#,(map
+              (lambda (x) (if (and (identifier? x) (free-identifier=? x #'<>))
+                            #'init
+                            x))
+              #'(forms ...)))
+      ((_ pred init form) #'(~? pred init form)))))
 
   (define-syntax ~<>
     (syntax-rules ()
