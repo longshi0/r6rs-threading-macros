@@ -21,7 +21,7 @@
 ;; SOFTWARE.
 
 #!r6rs
-(library (threading)
+(library (control threading)
   (export ~> ~>> some~> some~>> <> ~<> ~<>> some~<> some~<>>)
   (import (rnrs))
 
@@ -29,45 +29,45 @@
     (lambda (stx)
       (syntax-case stx ()
         ((_ pred init form)
-          (pair? (syntax->datum #'form))
-          (syntax-case #'form (before after)
-            ((f f1 ...)
-              (identifier? #'pred)
-              (cond
-                ((free-identifier=? #'pred #'before) #'(f init f1 ...))
-                ((free-identifier=? #'pred #'after) #'(f f1 ... init))))))
+	 (pair? (syntax->datum #'form))
+	 (syntax-case #'form (before after)
+	   ((f f1 ...)
+	    (identifier? #'pred)
+	    (cond
+	     ((free-identifier=? #'pred #'before) #'(f init f1 ...))
+	     ((free-identifier=? #'pred #'after) #'(f f1 ... init))))))
         ((_ _ init form)
-          #'(if (procedure? form) (form init) form)))))
+	 #'(if (procedure? form) (form init) form)))))
 
   (define-syntax wand~?
     (lambda (stx)
       (syntax-case stx ()
         ((_ _ init (forms ...))
-          (memq '<> (syntax->datum #'(forms ...)))
-          #`#,(map
-                (lambda (x) (if (and (identifier? x) (free-identifier=? x #'<>))
+	 (memq '<> (syntax->datum #'(forms ...)))
+	 #`#,(map
+	      (lambda (x) (if (and (identifier? x) (free-identifier=? x #'<>))
                               #'init
                               x))
-                #'(forms ...)))
+	      #'(forms ...)))
         ((_ pred init form) #'(~? pred init form)))))
 
   (define-syntax define-threading-macro
     (lambda (stx)
       (syntax-case stx ()
         ((_ name where arrow? some?)
-          (and
-            (boolean? (syntax->datum #'arrow?))
-            (boolean? (syntax->datum #'some?)))
-          #'(define-syntax name
-             (lambda (x)
-               (syntax-case x ()
-                  ((_ init) #'init)
-                  ((_ init form)
-                    (if (syntax->datum #'arrow?)
+	 (and
+	  (boolean? (syntax->datum #'arrow?))
+	  (boolean? (syntax->datum #'some?)))
+	 #'(define-syntax name
+             (lambda (stx)
+               (syntax-case stx ()
+		 ((_ init) #'init)
+		 ((_ init form)
+		  (if (syntax->datum #'arrow?)
                       #'(~? where init form)
                       #'(wand~? where init form)))
-                  ((_ init form forms (... ...))
-                    (if (syntax->datum #'some?)
+		 ((_ init form forms (... ...))
+		  (if (syntax->datum #'some?)
                       #'(let ((i (name init form))) (if i (name i forms (... ...)) #f))
                       #'(let ((i (name init form))) (name i forms (... ...))))))))))))
 
@@ -80,7 +80,7 @@
   (define-threading-macro some~>> after #t #t)
 
   (define-syntax <>
-    (lambda (x) (syntax-violation '<> "misplaced aux keyword" x)))
+    (lambda (stx) (syntax-violation '<> "misplaced aux keyword" stx)))
 
   (define-threading-macro ~<> before #f #f)
 
