@@ -7,7 +7,7 @@ e.g. for math expressions or object-oriented code).
 
 **N.B.** when threading lambda expressions, they must be enclosed within an extra set of parens.
 
-## (import (threading))
+## (import (control threading))
 (**~>** *init-expr exprs ...*)
 
 Insert *init-expr* subsequently as the second item in each *exprs ...*
@@ -32,16 +32,16 @@ Insert *init-expr* subsequently as the last item in each *exprs ...*
 ; => foo
 ```
 ---
-<!--(**~<>** *init-expr exprs ...*)
+(**~<>** *init-expr exprs ...*)
 
-Insert *init-expr* wherever the symbol **<>** appears in each *exprs ...* form.
+Insert *init-expr* wherever the symbol **<>** appears in each *exprs ...* form.<br />
+If no **<>** appears, default to the behavior of **~>**.
 
 ```scheme
 (~<> (add1 1)
      (< 1 <> 100)
-     (and <> <>)
+     (and #t)
      (if <> 'foo 'bar))
 ; => foo
 ```
 ---
--->
