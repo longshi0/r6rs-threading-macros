@@ -34,7 +34,7 @@
   (assert
     (eq? 'foo (~<> (add1 1)
                 (< 1 <> 100)
-                (and <> <>)
+                (and #t)
                 (if <> 'foo 'bar))))
   (assert
     (= (~<> 1) 1))
