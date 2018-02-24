@@ -1,5 +1,5 @@
 #!/usr/bin/env scheme-script
-(import (scheme) (threading))
+(import (scheme) (control threading))
 
 (define (test-~>)
   (format #t "Testing ~~>...")
