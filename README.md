@@ -16,12 +16,14 @@ form evaluates to `#f`.
 
 #### Caveats:
 * when threading lambda expressions, they must be enclosed within an extra set
-  of parens (eg `((lambda (x) x))`).
+  of parens (eg `((lambda (x) x))`. When using the `<>` macros, the `<>` cannot
+  appear in the body of the lambda -- `((lambda (x) (+ x 1)) <>)` is valid
+  whereas `(lambda (x) (+ x <>))` will raise an exception.
 * be mindful that quoted symbols (eg `'foo`), which appear to be atoms, expand
   to `(quote foo)`
 
 ## (import (threading))
-(**~>** *init-expr* [forms ...])
+(**~>** *init-expr* *[forms ...]*)
 
 Thread *init-expr* as the subsequent second item in each of the *forms*
 
@@ -30,9 +32,9 @@ Thread *init-expr* as the subsequent second item in each of the *forms*
 ; => 10
 ```
 ---
-(**~>>** *init-expr* [forms ...])
+(**~>>** *init-expr* *[forms ...]*)
 
-Thread *init-expr* as the subsequent last item in each  of the *forms*.
+Thread *init-expr* as the subsequent last item in each  of the forms.
 
 ```scheme
 (~>> 100
@@ -42,10 +44,10 @@ Thread *init-expr* as the subsequent last item in each  of the *forms*.
 ; => foo
 ```
 ---
-(**~<>** *init-expr* [forms ...])
+(**~<>** init-expr *[forms ...]*)
 
-Thread *init-expr* subsequently wherever the symbol `<>` appears (multiple
-occurrences allowed) in each of the *forms*. If no `<>` appears in a form,
+Thread init-expr subsequently wherever the symbol `<>` appears (multiple
+occurrences allowed) in each of the forms. If no `<>` appears in a form,
 behavior defaults to `~>`.
 
 ```scheme
@@ -56,14 +58,14 @@ behavior defaults to `~>`.
 ; => foo
 ```
 ---
-(**~<>>** *init-expr* [forms ...])
+(**~<>>** init-expr *[forms ...]*)
 
-Thread *init-expr* subsequently wherever the symbol `<>` appears (multiple
-occurrences allowed) in each of the *forms*. If no `<>` appears in a form,
+Thread init-expr subsequently wherever the symbol `<>` appears (multiple
+occurrences allowed) in each of the forms. If no `<>` appears in a form,
 behavior defaults to `~>>`.
 
 ---
-(**some~>** *init-expr* [forms ...])
+(**some~>** init-expr *[forms ...]*)
 
 The same behavior as `~>` except that if any form evaluates to `#f`, abort the
 sequence.
@@ -73,19 +75,19 @@ sequence.
 ; => #f
 ```
 ---
-(**some~>>** *init-expr* [forms ...])
+(**some~>>** init-expr *[forms ...]*)
 
 The same behavior as `~>>` except that if any form evaluates to `#f`, abort the
 sequence.
 
 ---
-(**some~<>** *init-expr* [forms ...])
+(**some~<>** init-expr *[forms ...]*)
 
 The same behavior as `~<>` except that if any form evaluates to `#f`, abort the
 sequence.
 
 ---
-(**some~>>** *init-expr* [forms ...])
+(**some~>>** init-expr *[forms ...]*)
 
 The same behavior as `~<>>` except that if any form evaluates to `#f`, abort the
 sequence.
