@@ -21,7 +21,7 @@
 ;; SOFTWARE.
 
 #!r6rs
-(library (control threading)
+(library (threading)
   (export ~> ~>> some~> some~>> <> ~<> ~<>> some~<> some~<>>)
   (import (rnrs))
 
