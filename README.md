@@ -23,18 +23,18 @@ form evaluates to `#f`.
   to `(quote foo)`
 
 ## (import (threading))
-(**~>** *init-expr* *[forms ...]*)
+(**~>** init-expr *[forms ...]*)
 
-Thread *init-expr* as the subsequent second item in each of the *forms*
+Thread init-expr as the subsequent second item in each of the *forms*
 
 ```scheme
 (~> 3 (* 10) (/ 2) (- 5))
 ; => 10
 ```
 ---
-(**~>>** *init-expr* *[forms ...]*)
+(**~>>** init-expr *[forms ...]*)
 
-Thread *init-expr* as the subsequent last item in each  of the forms.
+Thread init-expr as the subsequent last item in each  of the forms.
 
 ```scheme
 (~>> 100
